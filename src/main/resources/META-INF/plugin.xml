@@ -1,0 +1,15 @@
+<idea-plugin>
+    <id>com.example.emulatormanager</id>
+    <name>Emulator Manager</name>
+    <version>1.0.0</version>
+    <vendor email="you@example.com">Your Name</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Emulator Manager"
+                    anchor="left"
+                    factoryClass="com.example.avdcreator.EmulatorToolWindowFactory"/>
+    </extensions>
+
+</idea-plugin>
