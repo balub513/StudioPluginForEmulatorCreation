@@ -314,22 +314,95 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
         }
     }
 
+//    private fun setProxyWithAdb(proxy: String?, deviceSerial: String) {
+//        val sdkPath = getSdkPath() ?: return
+//        val adbPath = "$sdkPath/platform-tools/adb"
+//        thread {
+//            try {
+//                val args = if (proxy == null) {
+//                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", ":0")
+//                } else {
+//                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", proxy)
+//                }
+//                ProcessBuilder(args).inheritIO().start().waitFor()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
     private fun setProxyWithAdb(proxy: String?, deviceSerial: String) {
         val sdkPath = getSdkPath() ?: return
         val adbPath = "$sdkPath/platform-tools/adb"
+
         thread {
             try {
-                val args = if (proxy == null) {
-                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", ":0")
-                } else {
-                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", proxy)
+                when (proxy) {
+                    // -------------------------
+                    // LOCAL SERVER EMULATOR
+                    // -------------------------
+                    "localhost:8080" -> {
+                        // Reverse local port 8080 → emulator 8080
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "reverse", "tcp:8080", "tcp:8080")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+
+                        // Disable proxy inside emulator (use direct local)
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", ":0")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+                    }
+
+                    // -------------------------
+                    // REAL SERVER EMULATOR
+                    // -------------------------
+                    "proxy.jpmchase.net:10443" -> {
+                        // Reverse corporate port 10443 → emulator 10443
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "reverse", "tcp:10443", "tcp:10443")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+
+                        // Set both HTTP and HTTPS proxies
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", "proxy.jpmchase.net:10443")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "https_proxy", "proxy.jpmchase.net:10443")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+                    }
+
+                    // -------------------------
+                    // CLEAR PROXY
+                    // -------------------------
+                    null, "", ":0" -> {
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", ":0")
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+                    }
+
+                    // -------------------------
+                    // CUSTOM / OTHER PROXIES
+                    // -------------------------
+                    else -> {
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", proxy)
+                            .inheritIO()
+                            .start()
+                            .waitFor()
+                    }
                 }
-                ProcessBuilder(args).inheritIO().start().waitFor()
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
+
 
     private fun getAvdList(): List<String> {
         val avdDir = File(System.getProperty("user.home"), ".android/avd")
