@@ -24,8 +24,8 @@ intellijPlatform {
         name.set("Emulator Manager")
         version.set("1.0.0")
         ideaVersion {
-            sinceBuild.set("251")
-            untilBuild.set("251.*")
+            sinceBuild.set("242")
+            untilBuild.set("242.*")
         }
     }
     sandboxContainer.set(layout.projectDirectory.dir(".sandbox"))
