@@ -20,12 +20,14 @@ dependencies {
 }
 
 intellijPlatform {
+//    androidStudio("2025.1.1")  // target Narwhal
+    sandboxContainer.set(layout.projectDirectory.dir(".sandbox"))
     pluginConfiguration {
         name.set("Emulator Manager")
         version.set("1.0.0")
         ideaVersion {
-            sinceBuild.set("242")
-            untilBuild.set("242.*")
+            sinceBuild.set("251")
+            untilBuild.set("251.*")
         }
     }
     sandboxContainer.set(layout.projectDirectory.dir(".sandbox"))
