@@ -72,7 +72,11 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
         proxyOptions.addElement("Local Proxy (localhost:8080)")
         proxyOptions.addElement("Corporate Proxy (proxy.jpmchase.net:10443)")
         proxyOptions.addElement("Custom...")
-        val proxyDropdown = JComboBox(proxyOptions)
+        val proxyDropdown = JComboBox(proxyOptions).apply {
+            selectedIndex = 0 // Default to None
+            maximumSize = preferredSize
+        }
+
 
         val setProxyButton = JButton("Set Proxy")
         val clearProxyButton = JButton("Clear Proxy")
@@ -152,18 +156,46 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
             }
             refreshDevices(deviceList, logArea)
         }
+
+        // ----------------------
+// Proxy Dropdown Listener
+// ----------------------
+        var isProgrammaticChange = false
+        var lastValidSelection: String = proxyOptions.getElementAt(0)
+
         proxyDropdown.addActionListener {
-            val selected = proxyDropdown.selectedItem as String
+            if (isProgrammaticChange) return@addActionListener
+
+            val selected = proxyDropdown.selectedItem as? String ?: return@addActionListener
+
             if (selected == "Custom...") {
                 val custom = JOptionPane.showInputDialog(panel, "Enter custom proxy (host:port):")
+
+                isProgrammaticChange = true
                 if (!custom.isNullOrBlank()) {
+                    // Avoid duplicates
+                    for (i in 0 until proxyOptions.size) {
+                        if (proxyOptions.getElementAt(i).equals(custom, ignoreCase = true)) {
+                            proxyDropdown.selectedItem = custom
+                            isProgrammaticChange = false
+                            return@addActionListener
+                        }
+                    }
+                    // Insert before "Custom..."
                     proxyOptions.insertElementAt(custom, proxyOptions.size - 1)
                     proxyDropdown.selectedItem = custom
+                    lastValidSelection = custom
                 } else {
-                    proxyDropdown.selectedIndex = 0 // fallback to None
+                    // Revert to last valid (prevents None reset)
+                    proxyDropdown.selectedItem = lastValidSelection
                 }
+                isProgrammaticChange = false
+            } else {
+                // Update last valid for any other legitimate selection
+                lastValidSelection = selected
             }
         }
+
 
         clearProxyButton.addActionListener {
             val selectedDevice = deviceList.selectedItem as? String ?: return@addActionListener
@@ -314,22 +346,7 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
         }
     }
 
-//    private fun setProxyWithAdb(proxy: String?, deviceSerial: String) {
-//        val sdkPath = getSdkPath() ?: return
-//        val adbPath = "$sdkPath/platform-tools/adb"
-//        thread {
-//            try {
-//                val args = if (proxy == null) {
-//                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", ":0")
-//                } else {
-//                    listOf(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", proxy)
-//                }
-//                ProcessBuilder(args).inheritIO().start().waitFor()
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
+
     private fun setProxyWithAdb(proxy: String?, deviceSerial: String) {
         val sdkPath = getSdkPath() ?: return
         val adbPath = "$sdkPath/platform-tools/adb"
