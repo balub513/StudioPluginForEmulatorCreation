@@ -27,7 +27,7 @@ intellijPlatform {
         version.set("1.0.0")
         ideaVersion {
             sinceBuild.set("251")
-            untilBuild.set("251.*")
+            untilBuild.set("999.*")
         }
     }
     sandboxContainer.set(layout.projectDirectory.dir(".sandbox"))

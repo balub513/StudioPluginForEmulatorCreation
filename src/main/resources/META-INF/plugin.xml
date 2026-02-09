@@ -9,7 +9,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Emulator Manager"
                     anchor="left"
-                    factoryClass="com.example.avdcreator.advanced.EmulatorToolWindowFactory3"/>
+                    factoryClass="com.example.avdcreator.n1.EmulatorToolWindowFactory2"/>
     </extensions>
 
 </idea-plugin>
