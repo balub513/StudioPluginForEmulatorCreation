@@ -26,7 +26,12 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
         panel.add(mockButton)
         panel.add(Box.createVerticalStrut(8))
         panel.add(proxyButton)
-        panel.add(Box.createVerticalStrut(12))
+        panel.add(Box.createVerticalStrut(8))
+
+        // Button to clear the log output in the tool window
+        val clearLogsButton = JButton("Clear Logs")
+        panel.add(clearLogsButton)
+        panel.add(Box.createVerticalStrut(8))
         panel.add(scrollPane)
 
         val content = ContentFactory.getInstance().createContent(panel, "", false)
@@ -34,6 +39,10 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
 
         mockButton.addActionListener { launchMockEmulator(logArea) }
         proxyButton.addActionListener { launchProxyEmulator(logArea) }
+
+        clearLogsButton.addActionListener {
+            logArea.text = ""
+        }
     }
 
     // -------------------------------------------------------
