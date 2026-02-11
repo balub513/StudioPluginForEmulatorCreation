@@ -288,6 +288,7 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
                         "--force"
                     )
                         .redirectErrorStream(true)
+                        .inheritIO()
                         .start()
 
                     val output = process.inputStream.bufferedReader().readText()
