@@ -258,6 +258,14 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
      */
     private fun ensurePixelAvds(sdkPath: String, logArea: JTextArea): Pair<String, String>? {
         val existing = getAvdList().toSet()
+        // Ensure hardware keyboard is enabled for existing AVDs too
+        if (existing.contains(mockAvdName)) {
+            enableHardwareKeyboard(mockAvdName, logArea)
+        }
+        if (existing.contains(proxyAvdName)) {
+            enableHardwareKeyboard(proxyAvdName, logArea)
+        }
+        
         if (existing.contains(mockAvdName) && existing.contains(proxyAvdName)) {
             return mockAvdName to proxyAvdName
         }
@@ -288,8 +296,13 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
                         "--force"
                     )
                         .redirectErrorStream(true)
-                        .inheritIO()
                         .start()
+
+                    // Automatically answer "no" to custom hardware profile prompt
+                    process.outputStream.use { out ->
+                        out.write("no\n".toByteArray())
+                        out.flush()
+                    }
 
                     val output = process.inputStream.bufferedReader().readText()
                     val exitCode = process.waitFor()
@@ -303,6 +316,9 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
                     }
 
                     if (exitCode != 0) return null
+                    
+                    // Enable hardware keyboard input
+                    enableHardwareKeyboard(name, logArea)
                 } catch (e: Exception) {
                     SwingUtilities.invokeLater {
                         logArea.append("❌ Error while creating AVD '$name' → ${e.message}\n")
@@ -313,6 +329,57 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
         }
 
         return mockAvdName to proxyAvdName
+    }
+
+    /**
+     * Enable hardware keyboard input for the AVD by modifying its config.ini file.
+     */
+    private fun enableHardwareKeyboard(avdName: String, logArea: JTextArea) {
+        try {
+            val avdDir = File(System.getProperty("user.home"), ".android/avd")
+            val configFile = File(avdDir, "$avdName.avd/config.ini")
+            
+            if (!configFile.exists()) {
+                SwingUtilities.invokeLater {
+                    logArea.append("⚠️ Config file not found for $avdName, skipping keyboard setup\n")
+                }
+                return
+            }
+            
+            val lines = configFile.readLines().toMutableList()
+            var hasKeyboard = false
+            var modified = false
+            
+            // Check if hw.keyboard already exists
+            for (i in lines.indices) {
+                if (lines[i].startsWith("hw.keyboard")) {
+                    hasKeyboard = true
+                    // Update existing line
+                    if (!lines[i].contains("yes")) {
+                        lines[i] = "hw.keyboard = yes"
+                        modified = true
+                    }
+                    break
+                }
+            }
+            
+            // Add hw.keyboard if it doesn't exist
+            if (!hasKeyboard) {
+                lines.add("hw.keyboard = yes")
+                modified = true
+            }
+            
+            if (modified) {
+                configFile.writeText(lines.joinToString("\n"))
+                SwingUtilities.invokeLater {
+                    logArea.append("⌨️ Enabled hardware keyboard for $avdName\n")
+                }
+            }
+        } catch (e: Exception) {
+            SwingUtilities.invokeLater {
+                logArea.append("⚠️ Failed to enable hardware keyboard for $avdName → ${e.message}\n")
+            }
+        }
     }
 
     private fun findAvdManager(sdkPath: String): String? {
