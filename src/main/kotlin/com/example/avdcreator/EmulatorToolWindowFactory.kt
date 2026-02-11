@@ -376,18 +376,18 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
                     // -------------------------
                     "proxy.jpmchase.net:10443" -> {
                         // Reverse corporate port 10443 → emulator 10443
-                        ProcessBuilder(adbPath, "-s", deviceSerial, "reverse", "tcp:10443", "tcp:10443")
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "reverse", "tcp:8443", "tcp:8443")
                             .inheritIO()
                             .start()
                             .waitFor()
 
                         // Set both HTTP and HTTPS proxies
-                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", "proxy.jpmchase.net:10443")
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "http_proxy", "proxy.jpmchase.net:8443")
                             .inheritIO()
                             .start()
                             .waitFor()
 
-                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "https_proxy", "proxy.jpmchase.net:10443")
+                        ProcessBuilder(adbPath, "-s", deviceSerial, "shell", "settings", "put", "global", "https_proxy", "proxy.jpmchase.net:8443")
                             .inheritIO()
                             .start()
                             .waitFor()
