@@ -24,7 +24,7 @@ intellijPlatform {
     sandboxContainer.set(layout.projectDirectory.dir(".sandbox"))
     pluginConfiguration {
         name.set("Emulator Manager")
-        version.set("1.0.0")
+        version.set("1.2.0")
         ideaVersion {
             sinceBuild.set("251")
             untilBuild.set("999.*")

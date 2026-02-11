@@ -70,7 +70,7 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
         val proxyOptions = DefaultComboBoxModel<String>()
         proxyOptions.addElement("None")
         proxyOptions.addElement("Local Proxy (localhost:8080)")
-        proxyOptions.addElement("Corporate Proxy (proxy.jpmchase.net:10443)")
+        proxyOptions.addElement("Corporate Proxy (proxy.jpmchase.net:8443)")
         proxyOptions.addElement("Custom...")
         val proxyDropdown = JComboBox(proxyOptions).apply {
             selectedIndex = 0 // Default to None
@@ -141,7 +141,7 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
             val proxy = when (proxySelection) {
                 "None" -> null
                 "Local Proxy (localhost:8080)" -> "localhost:8080"
-                "Corporate Proxy (proxy.jpmchase.net:10443)" -> "proxy.jpmchase.net:10443"
+                "Corporate Proxy (proxy.jpmchase.net:8443)" -> "proxy.jpmchase.net:8443"
                 else -> proxySelection // custom entered
             }
 
@@ -374,8 +374,8 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
                     // -------------------------
                     // REAL SERVER EMULATOR
                     // -------------------------
-                    "proxy.jpmchase.net:10443" -> {
-                        // Reverse corporate port 10443 → emulator 10443
+                    "proxy.jpmchase.net:8443" -> {
+                        // Reverse corporate port 8443 → emulator 8443
                         ProcessBuilder(adbPath, "-s", deviceSerial, "reverse", "tcp:8443", "tcp:8443")
                             .inheritIO()
                             .start()
@@ -519,10 +519,10 @@ class EmulatorToolWindowFactory : ToolWindowFactory {
                     .start()
                 logArea.append("🚀 Launched $avd1 with Local Proxy (localhost:8080)\n")
 
-                ProcessBuilder(emulatorPath, "-avd", avd2, "-http-proxy", "proxy.jpmchase.net:10443")
+                ProcessBuilder(emulatorPath, "-avd", avd2, "-http-proxy", "proxy.jpmchase.net:8443")
                     .inheritIO()
                     .start()
-                logArea.append("🚀 Launched $avd2 with Corporate Proxy (proxy.jpmchase.net:10443)\n")
+                logArea.append("🚀 Launched $avd2 with Corporate Proxy (proxy.jpmchase.net:8443)\n")
 
             } catch (e: Exception) {
                 e.printStackTrace()

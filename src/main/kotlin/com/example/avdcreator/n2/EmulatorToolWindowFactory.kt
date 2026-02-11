@@ -159,9 +159,9 @@ class EmulatorToolWindowFactory4 : ToolWindowFactory {
     private fun launchProxy(log: JTextArea, avd: String?) {
         launch(
             log, avd, "Proxy",
-            reversePort = "10443",
-            httpProxy = "proxy.jpmchase.net:10443",
-            httpsProxy = "proxy.jpmchase.net:10443"
+            reversePort = "8443",
+            httpProxy = "proxy.jpmchase.net:8443",
+            httpsProxy = "proxy.jpmchase.net:8443"
         )
     }
 
@@ -181,9 +181,9 @@ class EmulatorToolWindowFactory4 : ToolWindowFactory {
 
           For real  server emulator below two commands should execute
 
-           ./adb reverse tcp:10443 tcp:10443
-           ./adb shell settings put global http_proxy proxy.jpmchase.net:10443
-           ./adb shell settings put global https_proxy proxy.jpmchase.net:10443
+           ./adb reverse tcp:8443 tcp:8443
+           ./adb shell settings put global http_proxy proxy.jpmchase.net:8443
+           ./adb shell settings put global https_proxy proxy.jpmchase.net:8443
      */
 
     private fun launch(

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.example.emulatormanager</id>
     <name>Emulator Manager</name>
-    <version>1.0.0</version>
+    <version>1.2.0</version>
     <vendor email="you@example.com">Your Name</vendor>
 
     <depends>com.intellij.modules.platform</depends>

@@ -169,10 +169,10 @@ class EmulatorToolWindowFactory3 : ToolWindowFactory {
                 val device = waitForNewEmulator(adb, existing)
                 waitForBootCompleted(adb, device, logArea, avd)
 
-                logArea.append("[${avd}] 🔁 Applying Corporate Proxy (10443)\n")
-                ProcessBuilder(adb, "-s", device, "reverse", "tcp:10443", "tcp:10443").start().waitFor()
-                ProcessBuilder(adb, "-s", device, "shell", "settings", "put", "global", "http_proxy", "proxy.jpmchase.net:10443").start().waitFor()
-                ProcessBuilder(adb, "-s", device, "shell", "settings", "put", "global", "https_proxy", "proxy.jpmchase.net:10443").start().waitFor()
+                logArea.append("[${avd}] 🔁 Applying Corporate Proxy (8443)\n")
+                ProcessBuilder(adb, "-s", device, "reverse", "tcp:8443", "tcp:8443").start().waitFor()
+                ProcessBuilder(adb, "-s", device, "shell", "settings", "put", "global", "http_proxy", "proxy.jpmchase.net:8443").start().waitFor()
+                ProcessBuilder(adb, "-s", device, "shell", "settings", "put", "global", "https_proxy", "proxy.jpmchase.net:8443").start().waitFor()
 
                 val finalProxy = readHttpProxy(adb, device)
                 logArea.append("[${avd}] ✅ Ready with proxy: $finalProxy\n")

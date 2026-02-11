@@ -154,14 +154,14 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
                     logArea.append("🔁 Applying corporate proxy...\n")
                 }
 
-                ProcessBuilder(adbPath, "-s", deviceId, "reverse", "tcp:10443", "tcp:10443")
+                ProcessBuilder(adbPath, "-s", deviceId, "reverse", "tcp:8443", "tcp:8443")
                     .start()
                     .waitFor()
 
                 ProcessBuilder(
                     adbPath, "-s", deviceId,
                     "shell", "settings", "put", "global",
-                    "http_proxy", "proxy.jpmchase.net:10443"
+                    "http_proxy", "proxy.jpmchase.net:8443"
                 )
                     .start()
                     .waitFor()
@@ -169,7 +169,7 @@ class EmulatorToolWindowFactory2 : ToolWindowFactory {
                 ProcessBuilder(
                     adbPath, "-s", deviceId,
                     "shell", "settings", "put", "global",
-                    "https_proxy", "proxy.jpmchase.net:10443"
+                    "https_proxy", "proxy.jpmchase.net:8443"
                 )
                     .start()
                     .waitFor()
